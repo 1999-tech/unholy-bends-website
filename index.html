@@ -48,6 +48,9 @@
   nav a.active{border-left:2px solid var(--mustard);padding-left:22px;}
   .placeholder-tag{font-size:0.55rem;color:rgba(237,228,212,0.3);margin-left:auto;}
   .side-foot{padding:0 24px;display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--paper-dim);letter-spacing:1px;text-transform:uppercase;}
+  .mobile-menu-btn{display:none;}
+  .mobile-nav{display:none;}
+  .mobile-nav-close{display:none;}
   .rec-dot{width:7px;height:7px;border-radius:50%;background:var(--brick);animation:blink 1.6s infinite;}
   @keyframes blink{0%,60%{opacity:1;}80%{opacity:0.15;}100%{opacity:1;}}
 
@@ -325,6 +328,16 @@
   @media (max-width:900px){
     :root{--sidebar-w:0px;}
     #sidebar{display:none;}
+    .mobile-menu-btn{display:flex;align-items:center;justify-content:center;position:fixed;top:20px;right:20px;z-index:250;width:42px;height:42px;background:rgba(13,13,13,0.75);border:1px solid rgba(237,228,212,0.25);color:var(--paper);font-size:1.3rem;cursor:pointer;backdrop-filter:blur(4px);line-height:1;}
+    .mobile-menu-btn:hover{border-color:var(--mustard);color:var(--mustard);}
+    body.menu-open .mobile-menu-btn{display:none;}
+    .mobile-nav{display:block;position:fixed;inset:0;background:var(--charcoal);z-index:260;transform:translateX(100%);transition:transform 0.3s ease;padding:90px 32px 40px;overflow-y:auto;visibility:hidden;}
+    body.menu-open .mobile-nav{transform:translateX(0);visibility:visible;}
+    .mobile-nav-close{display:flex;align-items:center;justify-content:center;position:fixed;top:20px;right:20px;z-index:270;width:42px;height:42px;background:none;border:1px solid rgba(237,228,212,0.25);color:var(--paper);font-size:1.2rem;cursor:pointer;visibility:hidden;opacity:0;transition:opacity 0.2s ease;}
+    body.menu-open .mobile-nav-close{visibility:visible;opacity:1;}
+    .mobile-nav nav ul{list-style:none;}
+    .mobile-nav nav a{display:block;padding:18px 0;border-bottom:1px solid rgba(237,228,212,0.08);color:var(--paper-dim);text-decoration:none;font-family:'Anton',sans-serif;font-size:1.5rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;}
+    .mobile-nav nav a.active{color:var(--mustard);}
     section{padding:0 24px;}
     .chapter, .chapter:nth-child(even){flex-direction:column;gap:30px;padding:0 24px;}
     .tape-card{flex-direction:column;text-align:center;}
@@ -375,6 +388,22 @@
 <div class="grain"></div>
 <div class="scanlines"></div>
 <div class="vignette"></div>
+
+<button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Open menu">&#9776;</button>
+<div id="mobileNav" class="mobile-nav">
+  <button id="mobileNavClose" class="mobile-nav-close" aria-label="Close menu">&#10005;</button>
+  <nav>
+    <ul>
+      <li><a data-target="home">Home</a></li>
+      <li><a data-target="music">Music</a></li>
+      <li><a data-target="videos">Videos</a></li>
+      <li><a data-target="releases">Releases</a></li>
+      <li><a data-target="universe">Universe</a></li>
+      <li><a data-target="tour">Tour</a></li>
+      <li><a data-target="press">Press</a></li>
+    </ul>
+  </nav>
+</div>
 
 <div id="portal">
   <div class="portal-logo">UNHOLY <span>BENDS</span></div>
@@ -870,6 +899,18 @@
   document.querySelectorAll('nav a[data-target]').forEach(a => {
     a.addEventListener('click', () => goTo(a.dataset.target));
   });
+
+  // ===== MOBILE NAV (hamburger) =====
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileNav = document.getElementById('mobileNav');
+  const mobileNavClose = document.getElementById('mobileNavClose');
+  function openMobileNav(){ document.body.classList.add('menu-open'); }
+  function closeMobileNav(){ document.body.classList.remove('menu-open'); }
+  if(mobileMenuBtn) mobileMenuBtn.addEventListener('click', openMobileNav);
+  if(mobileNavClose) mobileNavClose.addEventListener('click', closeMobileNav);
+  if(mobileNav){
+    mobileNav.querySelectorAll('a[data-target]').forEach(a => a.addEventListener('click', closeMobileNav));
+  }
 
   // ===== PORTAL =====
   const portal = document.getElementById('portal');
